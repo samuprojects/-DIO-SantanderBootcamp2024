@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("ALL")
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+
+    boolean existsByAccountNumber(String accountNumber);
 }
