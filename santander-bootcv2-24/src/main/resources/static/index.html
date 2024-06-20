@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gestão de Alunos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+<div class="container d-flex flex-column align-items-center">
+    <h1 class="mt-5">Gestão de Alunos</h1>
+    <br>
+    <br>
+    <div class="card" style="width:400px">
+        <img class="card-img-top" src="img_avatar1.png" alt="Card image">
+    </div>
+    <br>
+    <br>
+    <div class="d-flex justify-content-around">
+        <button type="button" class="btn btn-primary mx-2" data-bs-toggle="modal" data-bs-target="#inserirModal">Inserir</button>
+        <button type="button" class="btn btn-warning mx-2" data-bs-toggle="modal" data-bs-target="#atualizarModal">Atualizar</button>
+        <button type="button" class="btn btn-secondary mx-2" data-bs-toggle="modal" data-bs-target="#listarModal">Listar</button>
+        <button type="button" class="btn btn-danger mx-2" data-bs-toggle="modal" data-bs-target="#excluirModal">Excluir</button>
+    </div>
+</div>
+
+<!-- Modal Inserir -->
+<div class="modal fade" id="inserirModal" tabindex="-1" aria-labelledby="inserirModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inserirModalLabel">Inserir Aluno</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="inserirForm">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="nome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dataNascimento" class="form-label">Data de Nascimento</label>
+                        <input type="date" class="form-control" id="dataNascimento" required max="<%= getMaxDate() %>">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Atualizar -->
+<div class="modal fade" id="atualizarModal" tabindex="-1" aria-labelledby="atualizarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="atualizarModalLabel">Atualizar Aluno</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="atualizarForm">
+                    <div class="mb-3">
+                        <label for="id" class="form-label">ID</label>
+                        <input type="text" class="form-control" id="id" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nomeAtualizar" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="nomeAtualizar" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dataNascimentoAtualizar" class="form-label">Data de Nascimento</label>
+                        <input type="date" class="form-control" id="dataNascimentoAtualizar" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary">Atualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Listar -->
+<div class="modal fade" id="listarModal" tabindex="-1" aria-labelledby="listarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="listarModalLabel">Lista de Alunos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="listaAlunos">
+                    <!-- Tabela de alunos -->
+                </div>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center mt-3" id="pagination"></ul>
+                </nav>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Excluir -->
+<div class="modal fade" id="excluirModal" tabindex="-1" aria-labelledby="excluirModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="excluirModalLabel">Excluir Aluno</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="excluirForm">
+                    <div class="mb-3">
+                        <label for="idExcluir" class="form-label">ID</label>
+                        <input type="text" class="form-control" id="idExcluir" required>
+                        <button type="button" class="btn btn-primary mt-2" id="buscarAluno">Buscar Aluno</button>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nomeExcluir" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="nomeExcluir" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dataNascimentoExcluir" class="form-label">Data de Nascimento</label>
+                        <input type="date" class="form-control" id="dataNascimentoExcluir" disabled>
+                    </div>
+                    <div id="confirmacaoExcluir" class="d-none">
+                        <p>Tem certeza de que deseja excluir este aluno?</p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-danger d-none" id="confirmarExcluir">Excluir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script>
+    // inserir aluno
+document.querySelector('#inserirModal .btn-primary').addEventListener('click', () => {
+    const nome = document.getElementById('nome').value;
+    const dataNascimento = document.getElementById('dataNascimento').value;
+
+    // Verifica se os campos estão vazios
+    if (!nome || !dataNascimento) {
+        alert('Por favor, preencha todos os campos.');
+        return;
+    }
+
+    // Calcula a idade com base na data de nascimento
+    const idade = calcularIdade(dataNascimento);
+
+    // Verifica se a idade é válida
+    if (idade >= 0 && idade < 120) {
+        // Se a idade for válida, envia os dados para o servidor
+        fetch('/api/alunos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nome, dataNascimento })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json(); // Retorna o JSON da resposta
+            } else if (response.status === 429) {
+                alert('Não é possível inserir mais alunos. Limite de 15 alunos atingido.');
+                throw new Error('Limite de alunos atingido');
+            } else {
+                throw new Error('Erro ao inserir aluno');
+            }
+        })
+        .then(data => {
+            // Exibe uma mensagem com o ID do aluno criado com sucesso
+            alert(`Usuário número ${data.id} criado com sucesso. Anote esse número para consulta posterior.`);
+            // Limpa o formulário
+            document.getElementById('inserirForm').reset();
+            // Fecha o modal
+            const inserirModal = bootstrap.Modal.getInstance(document.getElementById('inserirModal'));
+            inserirModal.hide();
+        })
+        .catch(error => console.error('Erro:', error));
+    } else if (idade === -1) {
+        // Se a data de nascimento for inválida, exibe uma mensagem de erro
+        alert('A data de nascimento não pode ser posterior à data atual.');
+    } else {
+        // Se a idade não for válida, exibe uma mensagem de erro
+        alert('A data de nascimento não é válida. A idade deve ser inferior a 120 anos.');
+    }
+});
+
+// Função para calcular a idade com base na data de nascimento
+function calcularIdade(dataNascimento) {
+    const hoje = new Date();
+    const dataNascimentoDate = new Date(dataNascimento);
+
+    // Verifica se a data de nascimento é posterior à data atual
+    if (dataNascimentoDate > hoje) {
+        return -1; // Retorna -1 se a data de nascimento for inválida
+    }
+
+    let idade = hoje.getFullYear() - dataNascimentoDate.getFullYear();
+    const mes = hoje.getMonth() - dataNascimentoDate.getMonth();
+    if (mes < 0 || (mes === 0 && hoje.getDate() < dataNascimentoDate.getDate())) {
+        idade--;
+    }
+    return idade;
+}
+
+ // atualizar aluno
+document.querySelector('#atualizarModal .btn-primary').addEventListener('click', () => {
+    const id = document.getElementById('id').value;
+    const nome = document.getElementById('nomeAtualizar').value;
+    const dataNascimento = document.getElementById('dataNascimentoAtualizar').value;
+
+    // Validar a data de nascimento
+    const idade = calcularIdade(dataNascimento);
+    if (idade < 0 || idade >= 120) {
+        alert('A data de nascimento não é válida. A idade deve ser entre 0 e 120 anos.');
+        return;
+    }
+
+    // Exibir modal de confirmação
+    const confirmarAtualizacao = confirm('Deseja realmente salvar as novas informações?');
+    if (confirmarAtualizacao) {
+        // Se o usuário confirmar, realizar a atualização
+        fetch(`/api/alunos/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nome, dataNascimento })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Aluno atualizado com sucesso!');
+            document.getElementById('atualizarForm').reset();
+            const atualizarModal = bootstrap.Modal.getInstance(document.getElementById('atualizarModal'));
+            atualizarModal.hide();
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+});
+
+
+ // listar 10 registros
+  document.querySelector('#listarModal').addEventListener('show.bs.modal', () => {
+    const pageSize = 10;
+    let currentPage = 1;
+
+    function renderAlunos(alunos) {
+        const listaAlunos = document.getElementById('listaAlunos');
+        listaAlunos.innerHTML = `
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Data de Nascimento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${alunos.map(aluno => `
+                        <tr>
+                            <td>${aluno.id}</td>
+                            <td>${aluno.nome}</td>
+                            <td>${aluno.dataNascimento}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+
+    function renderPagination(totalPages) {
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = `
+            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <button class="page-link" onclick="goToPage(${currentPage - 1})">Anterior</button>
+            </li>
+            ${Array.from({ length: totalPages }, (_, index) => `
+                <li class="page-item ${currentPage === index + 1 ? 'active' : ''}">
+                    <button class="page-link" onclick="goToPage(${index + 1})">${index + 1}</button>
+                </li>
+            `).join('')}
+            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <button class="page-link" onclick="goToPage(${currentPage + 1})">Próxima</button>
+            </li>
+        `;
+    }
+
+    function goToPage(page) {
+    currentPage = page;
+    fetch(`/api/alunos?page=${page - 1}&size=${pageSize}`)
+        .then(response => response.json())
+        .then(data => {
+            renderAlunos(data.content);
+            renderPagination(data.totalPages);
+        })
+        .catch(error => console.error('Erro:', error));
+}
+
+
+    goToPage(1);
+});
+
+
+
+ // excluir aluno
+     document.querySelector('#excluirModal .btn-danger').addEventListener('click', () => {
+   const id = document.getElementById('idExcluir').value;
+
+   fetch(`/api/alunos/${id}`, {
+     method: 'DELETE'
+   })
+   .then(() => {
+     alert(`Aluno com ID ${id} excluído com sucesso!`);
+     document.getElementById('excluirForm').reset();
+     document.getElementById('confirmacaoExcluir').classList.add('d-none');
+     document.getElementById('confirmarExcluir').classList.add('d-none');
+     const excluirModal = bootstrap.Modal.getInstance(document.getElementById('excluirModal'));
+     excluirModal.hide();
+   })
+   .catch(error => console.error('Erro:', error));
+ });
+</script>
+
+</body>
+</html>
